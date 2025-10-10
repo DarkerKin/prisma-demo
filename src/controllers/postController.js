@@ -8,15 +8,18 @@ import {
 
 import { matchedData } from 'express-validator';
 
-export function getAllPostsHandler(req, res) {
-  let query = matchedData(req);
-  let result = getAllPosts(query);
+export async function getAllPostsHandler(req, res) {
+  const {categoryId, search} = req.query;
+  const filter = {}
+  if (categoryId) filter.categoryId = categoryId;
+  if(search) filter.search = search;
+  let result = await getAllPosts(filter);
   res.status(200).json(result);
 }
 
-export function getPostByIdHandler(req, res) {
+export async function getPostByIdHandler(req, res) {
   let id = parseInt(req.params.id);
-  let post = getPostById(id);
+  let post = await getPostById(id);
   res.status(200).json(post);
 }
 

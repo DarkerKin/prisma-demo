@@ -5,12 +5,12 @@ import {
   update,
   remove,
 } from '../respositories/postRepo.js';
-export function getAllPosts(query) {
-  return getAll(query);
+export async function getAllPosts(filter) {
+  return await getAll(filter);
 }
 
-export function getPostById(id) {
-  let result = getById(id);
+export async function getPostById(id) {
+  let result = await getById(id);
   if (result) return result;
   else {
     const error = new Error(`Cannot find post with id ${id}`);
