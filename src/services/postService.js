@@ -19,19 +19,17 @@ export async function getPostById(id) {
   }
 }
 
-export function createPost(data) {
-  const now = new Date().toISOString();
-  let post = {
+export async function createPost(data) {
+  const post = {
     title: data.title,
     content: data.content,
-    createdAt: now,
-  };
-
-  return create(post);
+    categoryId: data.categoryId
+  }
+  return await create(post);
 }
 
-export function updatePost(id, data) {
-  const updatedPost = update(id, data);
+export async function updatePost(id, data) {
+  const updatedPost = await update(id, data);
   if (updatedPost) return updatedPost;
   else {
     const error = new Error(`Cannot find post with id ${id}`);
@@ -40,8 +38,8 @@ export function updatePost(id, data) {
   }
 }
 
-export function deletePost(id) {
-  const result = remove(id);
+export async function deletePost(id) {
+  const result = await remove(id);
   if (result) return;
   else {
     const error = new Error(`Cannot find post with id ${id}`);

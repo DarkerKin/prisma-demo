@@ -8,32 +8,32 @@ import {
 
 import { matchedData } from 'express-validator';
 
-export function getAllCategoriesHandler(req, res) {
-  let result = getAllCategories();
+export async function getAllCategoriesHandler(req, res) {
+  let result = await getAllCategories();
   res.status(200).json(result);
 }
 
-export function getCategoryByIdHandler(req, res) {
+export async function getCategoryByIdHandler(req, res) {
   let id = parseInt(req.params.id);
-  let category = getCategoryById(id);
+  let category = await getCategoryById(id);
   res.status(200).json(category);
 }
 
-export function createCategoryHandler(req, res) {
+export async function createCategoryHandler(req, res) {
   let data = req.body;
-  let newCategory = createCategory(data);
+  let newCategory = await createCategory(data);
   res.status(201).json(newCategory);
 }
 
-export function updateCategoryHandler(req, res) {
+export async function updateCategoryHandler(req, res) {
   let id = parseInt(req.params.id);
   let updates = req.body;
-  const updatedCategory = updateCategory(id, updates);
+  const updatedCategory = await updateCategory(id, updates);
   res.status(200).json(updatedCategory);
 }
 
-export function deleteCategoryHandler(req, res) {
+export async function deleteCategoryHandler(req, res) {
   let id = parseInt(req.params.id);
-  deleteCategory(id);
+  await deleteCategory(id);
   res.status(204).send();
 }

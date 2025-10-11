@@ -1,4 +1,3 @@
-import { posts, getNextId } from '../db/posts.js';
 import prisma from '../config/db.js';
 
 export async function getAll(filter) {
@@ -18,8 +17,12 @@ export async function getAll(filter) {
       id:true,
       title:true,
       content:true,
+      createdAt:true,
       category:true
-    }
+    },
+    orderBy:{[filter.sortBy]:filter.sortOrder},
+    take: filter.limit,
+    skip: filter.offset,
   });
   return result;
 }
@@ -30,42 +33,43 @@ export async function getById(id) {
     select:{
       id:true,
       title:true,
+      createdAt:true,
       content:true,
-      category:{
-        select:{name:true}
-      }
+      category:true
     }
   })
   return post;
 }
 
-export function create(post) {
-  let id = getNextId();
-  const newPost = { id, ...post };
-  posts.push(newPost);
+export async function create(post) {
+  const newPost = await prisma.post.create({
+    data:post,
+    include: {category:true}
+  })
   return newPost;
 }
 
-export function update(id, updates) {
-  const index = posts.findIndex((post) => post.id === id);
-  if (index !== -1) {
-    const updatedPost = {
-      ...posts[index],
-      ...updates,
-    };
-    posts[index] = updatedPost;
-    return posts[index];
-  } else {
-    return null;
+export async function update(id, updates) {
+  try{
+    const updatedPost = await prisma.post.update({
+    where:{id},
+    data: updates,
+    include:{category:true}
+  })
+  return updatedPost
+  }catch(error){
+    if (error.code === 'P2025') return null;
   }
+  
 }
 
-export function remove(id) {
-  const index = posts.findIndex((post) => post.id === id);
-  if (index !== -1) {
-    posts.splice(index, 1);
-    return true;
-  } else {
-    return false;
+export async function remove(id) {
+  try{
+    const deletePost = await prisma.post.delete({where:{id}})
+    return deletePost;
   }
+  catch(error){
+    if (error.code === 'P2025') return null;
+  }
+  
 }

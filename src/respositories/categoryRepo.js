@@ -1,39 +1,62 @@
 import { categories, getNextId } from '../db/categories.js';
+import prisma from '../config/db.js';
 
-export function getAll(query) {
-  let result = [...categories];
+export async function getAll(query) {
+  let result = await prisma.category.findMany({
+    select:{
+      id:true,
+      name:true
+    }
+  })
   return result;
 }
 
-export function getById(id) {
-  let category = categories.find((category) => c.id === id);
+export async function getById(id) {
+  let category = await prisma.category.findUnique({
+    where:{id},
+    select:{
+      id:true,
+      name:true
+    }
+  })
   return category;
 }
 
-export function create(category) {
-  let id = getNextId();
-  const newCategory = { id, name: category.name };
-  categories.push(newCategory);
+export async function create(category) {
+  const newCategory = await prisma.category.create({
+    data:category,
+  });
   return newCategory;
 }
 
-export function update(id, updates) {
-  console.log(id);
-  const index = categories.findIndex((category) => category.id === id);
-  if (index !== -1) {
-    categories[index].name = updates.name;
-    return categories[index];
-  } else {
-    return null;
+export async function update(id, updates) {
+  try{
+    const updateCategory = await prisma.category.update({
+      where:{id},
+      data:updates,
+    })
+    return updateCategory;
+  }catch(err){
+    if(err.code === "P2025") return null
   }
 }
 
-export function remove(id) {
-  const index = categories.findIndex((category) => category.id === id);
-  if (index !== -1) {
-    categories.splice(index, 1);
-    return true;
-  } else {
-    return false;
+export async function remove(id) {
+  try{
+    const deleteCategory = await prisma.category.delete({where:{id}})
+    return deleteCategory;
   }
+  catch(error){
+    if (error.code === 'P2025') return null;
+  }
+}
+
+export async function exists(id){
+  const result = await prisma.category.count({where:{id}});
+  return result>0;
+}
+
+export async function categoryNameExists(categoryName){
+  const result = await prisma.category.count({where:{name:{contains:categoryName}}});
+  return result > 0;
 }

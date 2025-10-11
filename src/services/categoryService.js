@@ -5,12 +5,12 @@ import {
   update,
   remove,
 } from '../respositories/categoryRepo.js';
-export function getAllCategories(query) {
-  return getAll(query);
+export async function getAllCategories(query) {
+  return await getAll(query);
 }
 
-export function getCategoryById(id) {
-  let result = getById(id);
+export async function getCategoryById(id) {
+  let result = await getById(id);
   if (result) return result;
   else {
     const error = new Error(`Cannot find category with id ${id}`);
@@ -19,16 +19,16 @@ export function getCategoryById(id) {
   }
 }
 
-export function createCategory(data) {
+export async function createCategory(data) {
   let category = {
     name: data.name,
   };
 
-  return create(category);
+  return await create(category);
 }
 
-export function updateCategory(id, data) {
-  const updatedCategory = update(id, data);
+export async function updateCategory(id, data) {
+  const updatedCategory = await update(id, data);
   if (updatedCategory) return updatedCategory;
   else {
     const error = new Error(`Cannot find category with id ${id}`);
@@ -37,8 +37,8 @@ export function updateCategory(id, data) {
   }
 }
 
-export function deleteCategory(id) {
-  const result = remove(id);
+export async function deleteCategory(id) {
+  const result = await remove(id);
   if (result) return;
   else {
     const error = new Error(`Cannot find category with id ${id}`);
